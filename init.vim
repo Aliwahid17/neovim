@@ -30,6 +30,17 @@ call plug#begin("~/.vim/plugged")
   Plug 'https://github.com/preservim/tagbar' " Tagbar for code navigation
   Plug 'https://github.com/terryma/vim-multiple-cursors' " CTRL + N for multiple cursors
   Plug 'zchee/deoplete-jedi'
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+  Plug 'jiangmiao/auto-pairs'
+  Plug 'scrooloose/nerdcommenter'
+  Plug 'sbdchd/neoformat'
+  Plug 'davidhalter/jedi-vim'
+  Plug 'scrooloose/nerdtree'
+  Plug 'neomake/neomake'
+  Plug 'machakann/vim-highlightedyank'
+  Plug 'tmhedberg/SimpylFold'
 
 set encoding=UTF-8
 
@@ -47,7 +58,6 @@ call plug#end()
 if (has("termguicolors"))
  set termguicolors
 endif
-
 " Theme
 syntax enable
 colorscheme dracula
@@ -71,6 +81,25 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 nnoremap <silent> <C-b> :NERDTreeToggle<CR>
 let g:NERDTreeDirArrowExpandable="+"
 let g:NERDTreeDirArrowCollapsible="~"
+let g:deoplete#enable_at_startup = 1
+let g:airline_theme='<wombat>'
+
+" Enable alignment
+let g:neoformat_basic_format_align = 1
+
+" Enable tab to space conversion
+let g:neoformat_basic_format_retab = 1
+
+" Enable trimmming of trailing whitespace
+let g:neoformat_basic_format_trim = 1
+
+" disable autocompletion, because we use deoplete for completion
+let g:jedi#completions_enabled = 0
+
+" open the go-to function in split, not another buffer
+let g:jedi#use_splits_not_buffers = "right"
+
+let g:neomake_python_enabled_makers = ['pylint']
 
 nnoremap <C-p> :FZF<CR>
 let g:fzf_action = {
@@ -116,7 +145,6 @@ let g:airline_powerline_fonts = 1
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
-
 " airline symbols
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
@@ -127,3 +155,11 @@ let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
 inoremap <expr> <Tab> pumvisible() ? coc#_select_confirm() : "<Tab>"
+
+
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+call neomake#configure#automake('nrwi', 500)
+hi HighlightedyankRegion cterm=reverse gui=reverse
+" set highlight duration time to 1000 ms, i.e., 1 second
+let g:highlightedyank_highlight_duration = 1000
